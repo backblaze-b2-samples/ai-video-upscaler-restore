@@ -141,3 +141,8 @@ def test_video_run_extracts_upscales_and_assembles(monkeypatch):
     assert "restored/job-1/output.mp4" in puts
     assert result.frames_total == 3
     assert result.faces_restored == 3  # 1 per frame x 3
+    # Per-frame progress (PROGRESS_UPDATE_EVERY=1): frames_done is persisted
+    # after every frame, so intermediate counts 1 and 2 are written — not just
+    # the final 3 the old every-10-frames throttle would emit for a 3-frame clip.
+    progress = [j.frames_done for j in saved if j.frames_total == 3]
+    assert progress == [0, 1, 2, 3, 3]

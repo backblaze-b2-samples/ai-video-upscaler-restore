@@ -31,6 +31,11 @@ class Settings(BaseSettings):
     # volume in production if you care about surviving restarts.
     download_count_file: str = "data/download_count.json"
 
+    # Compute device for the restoration engine. "" = auto-detect
+    # (CUDA → Apple MPS → CPU). Set to "cpu", "cuda", "cuda:0", or "mps"
+    # to force a device (e.g. RESTORATION_DEVICE=cpu when a GPU OOMs).
+    restoration_device: str = ""
+
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 
     @property

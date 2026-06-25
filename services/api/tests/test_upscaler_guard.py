@@ -37,3 +37,16 @@ def test_upscale_image_raises_actionable_error_without_stack():
 def test_upscale_image_signature_stable():
     sig = inspect.signature(upscaler.upscale_image)
     assert list(sig.parameters) == ["image_bytes", "scale", "face_restore"]
+
+
+def test_choose_device_prefers_cuda_then_mps_then_cpu():
+    # Auto-detect order with no override: CUDA → MPS → CPU.
+    assert upscaler._choose_device_name("", cuda=True, mps=True) == "cuda"
+    assert upscaler._choose_device_name("", cuda=False, mps=True) == "mps"
+    assert upscaler._choose_device_name("", cuda=False, mps=False) == "cpu"
+
+
+def test_choose_device_override_wins_and_is_trimmed():
+    # An explicit RESTORATION_DEVICE beats auto-detection, even if a GPU exists.
+    assert upscaler._choose_device_name("cpu", cuda=True, mps=True) == "cpu"
+    assert upscaler._choose_device_name("  cuda:1 ", cuda=False, mps=False) == "cuda:1"

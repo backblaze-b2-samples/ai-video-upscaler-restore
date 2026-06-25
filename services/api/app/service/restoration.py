@@ -28,6 +28,11 @@ from app.types.jobs import RestorationJob
 
 logger = logging.getLogger(__name__)
 
+# How often (in frames) to persist video progress to the manifest. 1 = write
+# after every frame so the polling UI tracks progress frame-by-frame. Each
+# write is one B2 PUT, so raise this to trade granularity for fewer writes.
+PROGRESS_UPDATE_EVERY = 1
+
 
 def _touch(job: RestorationJob, **changes) -> RestorationJob:
     """Apply changes + bump updated_at and persist the manifest."""
@@ -76,7 +81,7 @@ def _restore_video(job: RestorationJob, src: bytes) -> RestorationJob:
             )
             (out_dir / frame.name).write_bytes(png)
             faces += f
-            if (i + 1) % 10 == 0 or i + 1 == len(frames):
+            if (i + 1) % PROGRESS_UPDATE_EVERY == 0 or i + 1 == len(frames):
                 job = _touch(job, frames_done=i + 1)
 
         out_video = tmp / "output.mp4"

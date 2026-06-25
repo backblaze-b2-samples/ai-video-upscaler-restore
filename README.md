@@ -78,6 +78,8 @@ cd ../..
 
 The engine is lazy-imported (see `app/repo/upscaler.py`), so the server starts, the test suite passes, and `pnpm build` works without the restore stack. If you try to run a restoration without it, you get a clear, actionable error pointing back at `requirements-restore.txt`.
 
+> **GPU acceleration:** restorations auto-detect the fastest available compute device — **CUDA** (NVIDIA) → **Apple MPS** (Apple Silicon) → **CPU** — and use fp16 on CUDA. No config needed; it just uses the GPU when one is present. To pin a device (e.g. force CPU if a GPU runs out of memory), set `RESTORATION_DEVICE=cpu` (or `cuda` / `cuda:0` / `mps`) in `.env`.
+
 > **Install gotcha (handled):** `basicsr` (pulled in by realesrgan/gfpgan) imports `torchvision.transforms.functional_tensor`, which was removed in torchvision ≥ 0.17. `requirements-restore.txt` pins a compatible torch/torchvision pair, and `app/repo/upscaler.py` also installs a tiny shim aliasing the old module path to `torchvision.transforms.functional` before importing the engine, so a newer torchvision still works.
 
 ### 3. Add your B2 credentials

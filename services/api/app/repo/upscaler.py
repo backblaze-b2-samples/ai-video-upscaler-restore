@@ -69,6 +69,44 @@ def engine_available() -> bool:
     )
 
 
+def _choose_device_name(override: str, cuda: bool, mps: bool) -> str:
+    """Pick a torch device name. Pure (no torch) so it's unit-testable.
+
+    Order: an explicit override wins, then CUDA (NVIDIA), then Apple MPS,
+    else CPU. Mirrors how the engine should "use the GPU when available".
+    """
+    if override.strip():
+        return override.strip()
+    if cuda:
+        return "cuda"
+    if mps:
+        return "mps"
+    return "cpu"
+
+
+def _select_device():
+    """Resolve the torch.device the engine should run on. Lazy-imports torch.
+
+    Auto-detects CUDA → Apple MPS → CPU unless RESTORATION_DEVICE forces one.
+    For MPS we enable PYTORCH_ENABLE_MPS_FALLBACK so any op Real-ESRGAN/basicsr
+    doesn't implement on MPS silently runs on CPU instead of erroring.
+    """
+    import os
+
+    import torch
+
+    from app.config.settings import settings
+
+    cuda = torch.cuda.is_available()
+    mps_backend = getattr(torch.backends, "mps", None)
+    mps = bool(mps_backend is not None and mps_backend.is_available())
+    name = _choose_device_name(settings.restoration_device, cuda, mps)
+    if name == "mps":
+        os.environ.setdefault("PYTORCH_ENABLE_MPS_FALLBACK", "1")
+    logger.info("Restoration engine device selected: %s", name)
+    return torch.device(name)
+
+
 def _build_upscaler(scale: int, face_restore: bool):
     """Construct the Real-ESRGAN (+ optional GFPGAN) pipeline. Lazy imports."""
     _install_functional_tensor_shim()
@@ -77,6 +115,11 @@ def _build_upscaler(scale: int, face_restore: bool):
         from realesrgan import RealESRGANer
     except ImportError as e:
         raise EngineUnavailableError(INSTALL_HINT) from e
+
+    device = _select_device()
+    # fp16 is a free speedup on CUDA but is unsupported/slow on CPU and not
+    # reliable on MPS, so keep full precision off CUDA.
+    use_half = device.type == "cuda"
 
     model = RRDBNet(
         num_in_ch=3,
@@ -93,7 +136,8 @@ def _build_upscaler(scale: int, face_restore: bool):
         tile=256,
         tile_pad=10,
         pre_pad=0,
-        half=False,
+        half=use_half,
+        device=device,
     )
 
     face_enhancer = None
@@ -110,6 +154,7 @@ def _build_upscaler(scale: int, face_restore: bool):
                 arch="clean",
                 channel_multiplier=2,
                 bg_upsampler=upsampler,
+                device=device,
             )
         except ImportError as e:
             raise EngineUnavailableError(INSTALL_HINT) from e

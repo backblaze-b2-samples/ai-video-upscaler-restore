@@ -7,6 +7,24 @@ Built for **archivists, content studios, and ML data teams**. Runs on **local OS
 
 **Why B2 is the point:** every restored clip writes back at 4×–8× the source resolution, so a 10 GB archive of SD footage can balloon to 40–80 GB of restored outputs. The app surfaces this **output-footprint growth** as its headline dashboard metric — a concrete picture of why durable, cheap object storage is the right home for an AI restoration pipeline. All B2 access is via the **S3-compatible API**, with a custom user-agent and the standardized `B2_*` env vars.
 
+## What it looks like
+
+**Dashboard** — restoration metrics, the source-vs-restored footprint chart, and the headline output-footprint growth multiplier over your B2 archive.
+
+![Dashboard with restoration metrics and footprint growth chart](docs/images/dashboard.png)
+
+**Restorations** — the full Real-ESRGAN job list with type, scale, status, and growth, where jobs are created, run, edited, and deleted.
+
+![Restorations job list with status and growth columns](docs/images/restorations.png)
+
+**Restorations Library** — a `restored/`-scoped before/after browser with side-by-side source vs restored, sizes, and the footprint-growth multiplier.
+
+![Before/after restorations library with side-by-side source and restored images](docs/images/library.png)
+
+**Restoration detail** — a single job opened into an expanded before/after view with source/restored dimensions, scale, and the output-footprint growth.
+
+![Restoration job detail with expanded before/after comparison](docs/images/job-detail.png)
+
 ## The workflow
 
 1. **Ingest** — upload degraded source footage/images; they land in `uploads/` on B2.

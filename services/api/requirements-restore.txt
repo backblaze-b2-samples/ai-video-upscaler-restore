@@ -1,0 +1,23 @@
+# Heavy ML restoration stack — installed ONLY when you actually want to RUN
+# restorations. The base requirements.txt has everything needed for the API,
+# the UI, all B2 features, tests, and lint to work WITHOUT this stack. The
+# engine is lazy-imported (see app/repo/upscaler.py), so nothing here is
+# imported at startup or during the test suite.
+#
+#   pip install -r services/api/requirements-restore.txt
+#
+# The torchvision pin matters: basicsr (pulled in by realesrgan/gfpgan)
+# imports `torchvision.transforms.functional_tensor`, which was REMOVED in
+# torchvision >= 0.17. We pin a compatible torch/torchvision pair below; as a
+# belt-and-braces fallback, app/repo/upscaler.py also installs a tiny shim
+# aliasing the old module path to torchvision.transforms.functional before
+# importing the engine, so a newer torchvision still works.
+
+torch>=2.1.0,<2.3.0
+torchvision>=0.16.0,<0.17.0
+numpy>=1.24.0,<2.0.0
+opencv-python-headless>=4.9.0
+realesrgan>=0.3.0
+gfpgan>=1.3.8
+basicsr>=1.4.2
+imageio-ffmpeg>=0.4.9

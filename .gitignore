@@ -49,3 +49,8 @@ test-results/
 
 # Local runtime data (download counter, etc.)
 services/api/data/
+
+# Restoration engine weights — Real-ESRGAN/GFPGAN/facexlib download these
+# (hundreds of MB) on first run, relative to the API working dir. Runtime
+# artifacts, never committed.
+gfpgan/

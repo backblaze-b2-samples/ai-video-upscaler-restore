@@ -111,6 +111,7 @@ export interface JobDetail {
 export interface RestorationItem {
   id: string;
   name: string;
+  source_type: JobSourceType;
   source_url: string;
   output_url: string;
   source_bytes: number;

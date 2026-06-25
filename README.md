@@ -160,6 +160,10 @@ Ingest a source on **Upload**, create a job on **Restorations**, hit **Run**, an
 
 MIT License - see [LICENSE](LICENSE) for details.
 
+Example media in the screenshots (a public-domain 1863 portrait for the face
+example; Big Buck Bunny, CC BY 3.0, for the upscale-only examples) is credited in
+[docs/CREDITS.md](docs/CREDITS.md).
+
 ## Claude Agent B2 Skill
 
 Manage Backblaze B2 from your terminal using natural language (list/search, audits, stale or large file detection, security checks, safe cleanup).

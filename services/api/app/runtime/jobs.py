@@ -18,7 +18,7 @@ from app.service.restoration import (
     get_source_url,
     run_restoration,
 )
-from app.types import JobCreate, JobStats, JobUpdate, RestorationJob
+from app.types import JobCreate, JobStats, JobUpdate, RestorationJob, SourceType
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +38,7 @@ class RestorationItem(BaseModel):
 
     id: str
     name: str
+    source_type: SourceType
     source_url: str
     output_url: str
     source_bytes: int
@@ -76,6 +77,7 @@ async def restorations_library_endpoint():
             RestorationItem(
                 id=job.id,
                 name=job.name,
+                source_type=job.source_type,
                 source_url=get_source_url(job),
                 output_url=get_output_url(job) or "",
                 source_bytes=job.source_bytes,

@@ -59,8 +59,18 @@ export function RestorationsLibrary() {
           </CardHeader>
           <CardContent className="p-4 space-y-3">
             <div className="grid grid-cols-2 gap-3">
-              <Thumb url={item.source_url} label="Source" bytes={item.source_bytes} />
-              <Thumb url={item.output_url} label="Restored" bytes={item.output_bytes} />
+              <Thumb
+                url={item.source_url}
+                label="Source"
+                bytes={item.source_bytes}
+                isVideo={item.source_type === "video"}
+              />
+              <Thumb
+                url={item.output_url}
+                label="Restored"
+                bytes={item.output_bytes}
+                isVideo={item.source_type === "video"}
+              />
             </div>
             <div className="text-xs text-muted-foreground">
               Footprint growth{" "}
@@ -81,10 +91,12 @@ function Thumb({
   url,
   label,
   bytes,
+  isVideo,
 }: {
   url: string;
   label: string;
   bytes: number;
+  isVideo: boolean;
 }) {
   return (
     <div className="space-y-1.5">
@@ -97,9 +109,20 @@ function Thumb({
         </span>
       </div>
       <div className="flex aspect-square items-center justify-center overflow-hidden rounded-md border border-border bg-muted/30">
-        {/* eslint-disable-next-line @next/next/no-img-element -- presigned B2
-            URLs expire; the Next optimizer would cache them past that. */}
-        <img src={url} alt={label} className="h-full w-full object-cover" />
+        {isVideo ? (
+          // Video outputs need a real <video>; a plain <img> renders a broken
+          // icon. controls + metadata preload show the first frame as a poster.
+          <video
+            src={url}
+            controls
+            preload="metadata"
+            className="h-full w-full bg-black object-contain"
+          />
+        ) : (
+          // presigned B2 URLs expire; the Next optimizer would cache them past that.
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={url} alt={label} className="h-full w-full object-cover" />
+        )}
       </div>
     </div>
   );

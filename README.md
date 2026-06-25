@@ -1,4 +1,4 @@
-<!-- last_verified: 2026-06-24 -->
+<!-- last_verified: 2026-06-25 -->
 # AI Video Upscaler & Restore
 
 Keep a permanent, self-hosted archive of both your *degraded originals* and your *AI-restored outputs* on **[Backblaze B2](https://www.backblaze.com/sign-up/ai-cloud-storage?utm_source=github&utm_medium=referral&utm_campaign=ai_artifacts&utm_content=b2ai-video-upscaler-restore)**. Upload low-resolution or degraded footage and images, create a **Restoration Job** that runs **Real-ESRGAN** 4×/8× super-resolution (with optional **GFPGAN** face restoration), and the larger restored output is written straight back to B2 alongside the source. A before/after browser reads both source and restored objects from B2 for side-by-side comparison and download.

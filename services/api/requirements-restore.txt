@@ -8,9 +8,9 @@
 #
 # basicsr (pulled in by realesrgan/gfpgan) imports
 # `torchvision.transforms.functional_tensor`, which was removed in torchvision
-# >= 0.17. app/repo/upscaler.py installs a tiny shim aliasing the old module
-# path to torchvision.transforms.functional before importing the engine, so
-# patched torch/torchvision releases remain compatible with the engine.
+# >= 0.17. services/api/app/repo/upscaler.py installs a tiny shim aliasing the
+# old module path to torchvision.transforms.functional before importing the
+# engine, so patched torch/torchvision releases remain compatible.
 
 torch>=2.13.0,<2.14.0
 torchvision>=0.28.0,<0.29.0

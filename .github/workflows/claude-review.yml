@@ -46,12 +46,16 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Set up pnpm
+        if: ${{ hashFiles('apps/web/package.json') != '' }}
+        run: |
+          corepack enable
+          corepack prepare pnpm@9.15.9 --activate
+
       - name: Install frontend dependencies
         if: ${{ hashFiles('apps/web/package.json') != '' }}
-        working-directory: apps/web
-        run: npm install
+        run: pnpm install --frozen-lockfile
 
       - name: Typecheck frontend
         if: ${{ hashFiles('apps/web/package.json') != '' }}
-        working-directory: apps/web
-        run: npm run typecheck
+        run: pnpm --filter @ai-video-upscaler-restore/web typecheck

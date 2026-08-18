@@ -6,15 +6,14 @@
 #
 #   pip install -r services/api/requirements-restore.txt
 #
-# The torchvision pin matters: basicsr (pulled in by realesrgan/gfpgan)
-# imports `torchvision.transforms.functional_tensor`, which was REMOVED in
-# torchvision >= 0.17. We pin a compatible torch/torchvision pair below; as a
-# belt-and-braces fallback, app/repo/upscaler.py also installs a tiny shim
-# aliasing the old module path to torchvision.transforms.functional before
-# importing the engine, so a newer torchvision still works.
+# basicsr (pulled in by realesrgan/gfpgan) imports
+# `torchvision.transforms.functional_tensor`, which was removed in torchvision
+# >= 0.17. services/api/app/repo/upscaler.py installs a tiny shim aliasing the
+# old module path to torchvision.transforms.functional before importing the
+# engine, so patched torch/torchvision releases remain compatible.
 
-torch>=2.1.0,<2.3.0
-torchvision>=0.16.0,<0.17.0
+torch>=2.13.0,<2.14.0
+torchvision>=0.28.0,<0.29.0
 numpy>=1.24.0,<2.0.0
 opencv-python-headless>=4.9.0
 realesrgan>=0.3.0
